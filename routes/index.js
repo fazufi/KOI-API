@@ -1,42 +1,60 @@
 const express = require("express");
 const router = express.Router();
 const multer = require("../helper/multer");
+const wilayah = require("../JSON/wilayah.json");
 
 const apiGet = async (req, res) => {
-  try {
-    const result = await req.db(req.params.table);
-    res.json(result);
-  } catch ({ code }) {
-    res.json(code);
+  if (req.params.table == "wilayah") {
+    let rpId = req.params.id;
+    const index = wilayah.findIndex((v) => v.id == rpId);
+    rpId ? res.json(wilayah[index]) : res.json(wilayah);
+    console.log(wilayah[index]);
+  } else {
+    try {
+      const result = await req.db(req.params.table);
+      res.json(result);
+    } catch ({ code }) {
+      res.json(code);
+    }
   }
 };
-//  const upload = async (ctx) => {
-//   let returnData = Object.keys(ctx.request.body)
-//   returnData.push('id')
-//   const result = await db("coba")
-//     .insert(ctx.request.body)
-//     .returning(returnData)
-//   ctx.ok(result[0])
-//   console.log(db("coba"));
-// }
-const uploadPelatihan = async (req, res) => {
+
+const peserta = async (req, res) => {
   try {
-    console.log(req.file.filename, req.body.id);
-    await req
-      .db("coba")
-      // .db("pelatihan")
-      .insert({ foto: req.file.filename })
-      // .update({ foto: req.file.filename })
-      // // .update({ foto: "foto" })
-      // .where({ id: req.body.id });
+    await req.db("peserta").insert(req.body);
     res.json(req.file);
   } catch (error) {
     res.json(error);
   }
 };
 
-router.post("/pelatihan/upload", multer.single("file"), uploadPelatihan);
-// router.post("/pelatihan/upload",  upload);
+const programlama = async (req, res) => {
+  try {
+    await req
+      .db("programLama")
+      .insert({ id: req.body.id, foto: req.file.filename });
+
+    res.json(req.file);
+  } catch (error) {
+    res.json(error);
+  }
+};
+
+const programBaru = async (req, res) => {
+  try {
+    await req
+      .db("programBaru")
+      .update({ foto: req.file.filename })
+      .where({ id: 1 });
+    res.json(req.file);
+  } catch (error) {
+    res.json(error);
+  }
+};
+
+router.post("/peserta", multer.single("foto"), peserta);
+router.post("/programLama", multer.single("foto"), programlama);
+router.post("/programBaru", multer.single("foto"), programBaru);
 router.get(["/:table", "/:table/:id"], apiGet);
 router.get("/", (req, res, next) => res.json("welcome"));
 
