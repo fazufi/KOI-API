@@ -52,6 +52,24 @@ const programBaru = async (req, res) => {
   }
 };
 
+router.get("/test", async (req, res, next) => {
+  try {
+    const result = req.db('kelas')
+      .select('peserta.nama as namaPeserta', 'program.nama as namaProgram')
+      .join('program', 'program.id', 'kelas.program')
+      .join('peserta', 'peserta.id', 'kelas.peserta')
+      // .where({program: '79f45e1d-97b5-11eb-99e7-7062b824f60e' })
+      // .where('peserta.nama', '=', 'joni')
+      // .where({ ['peserta.nama']: 'joni' })
+      .where('peserta.nama', 'like', 'jon%')
+
+
+    res.send(await result)
+
+  } catch (error) {
+    res.json(error)
+  }
+});
 router.post("/peserta", multer.single("foto"), peserta);
 router.post("/programLama", multer.single("foto"), programlama);
 router.post("/programBaru", multer.single("foto"), programBaru);
