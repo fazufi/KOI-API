@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const multer = require("../helper/multer");
 const wilayah = require("../JSON/wilayah.json");
+const uku = require("../helper/knex");
 
 const apiGet = async (req, res) => {
   if (req.params.table == "wilayah") {
@@ -52,24 +53,64 @@ const programBaru = async (req, res) => {
   }
 };
 
+// {this.props.stokProduk.map((item, b) => (
+const wilayahpost = async (req, res) => {
+  try {
+    await wilayah.forEach(async (element) => {
+      try {
+        await uku("provinsi").insert({
+          id: element.id,
+          nama: element.name,
+        });
+        await element.regencies.forEach(async (elementelement) => {
+          try {
+            await uku("kabupaten").insert({
+              id: elementelement.id,
+              nama: elementelement.name,
+            });
+          } catch (error) {
+            console.log(error);
+          }
+        });
+      } catch (error) {
+        console.log(error);
+      }
+    });
+  } catch (error) {
+    console.log(error);
+  }
+  // try {
+  // const result=
+  // await req.db("provinsi").insert({ nama: "jdjdjd" })
+
+  // console.log("iki");
+
+  res.json(req.file);
+
+  //   } catch (error) {
+  //     res.json(error);
+  //   }
+};
+
 router.get("/test", async (req, res, next) => {
   try {
-    const result = req.db('kelas')
-      .select('peserta.nama as namaPeserta', 'program.nama as namaProgram')
-      .join('program', 'program.id', 'kelas.program')
-      .join('peserta', 'peserta.id', 'kelas.peserta')
+    const result = req
+      .db("kelas")
+      .select("peserta.nama as namaPeserta", "program.nama as namaProgram")
+      .join("program", "program.id", "kelas.program")
+      .join("peserta", "peserta.id", "kelas.peserta")
       // .where({program: '79f45e1d-97b5-11eb-99e7-7062b824f60e' })
       // .where('peserta.nama', '=', 'joni')
       // .where({ ['peserta.nama']: 'joni' })
-      .where('peserta.nama', 'like', 'jon%')
+      .where("peserta.nama", "like", "jon%");
 
-
-    res.send(await result)
-
+    res.send(await result);
   } catch (error) {
-    res.json(error)
+    res.json(error);
   }
 });
+
+router.post("/provinsi", wilayahpost);
 router.post("/peserta", multer.single("foto"), peserta);
 router.post("/programLama", multer.single("foto"), programlama);
 router.post("/programBaru", multer.single("foto"), programBaru);
