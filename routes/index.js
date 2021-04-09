@@ -55,41 +55,40 @@ const programBaru = async (req, res) => {
 
 // {this.props.stokProduk.map((item, b) => (
 const wilayahpost = async (req, res) => {
-  try {
-    await wilayah.forEach(async (element) => {
-      try {
-        await uku("provinsi").insert({
-          id: element.id,
-          nama: element.name,
-        });
-        await element.regencies.forEach(async (elementelement) => {
+  await wilayah.forEach(async (prov) => {
+    // await uku("provinsi").insert({
+    //   id: prov.id,
+    //   nama: prov.name,
+    // });
+    await prov.regencies.forEach(async (kab) => {
+      // await uku("kabupaten").insert({
+      //   id: kab.id,
+      //   nama: kab.name,
+      //   idprovinsi: kab.province_id
+      // });
+      await kab.districts.forEach(async (kec) => {
+        // await uku("kecamatan").insert({
+        //   id: kec.id,
+        //   nama: kec.name,
+        //   idkabupaten: kec.regency_id
+        // })
+        await kec.villages.forEach(async (kel) => {
+
           try {
-            await uku("kabupaten").insert({
-              id: elementelement.id,
-              nama: elementelement.name,
-            });
+            await uku("kelurahan").insert({
+              id: kel.id,
+              nama: kel.name,
+              idkecamatan: kel.district_id
+            })
           } catch (error) {
-            console.log(error);
+            console.log(error)
           }
-        });
-      } catch (error) {
-        console.log(error);
-      }
+
+        })
+      })
     });
-  } catch (error) {
-    console.log(error);
-  }
-  // try {
-  // const result=
-  // await req.db("provinsi").insert({ nama: "jdjdjd" })
-
-  // console.log("iki");
-
-  res.json(req.file);
-
-  //   } catch (error) {
-  //     res.json(error);
-  //   }
+  });
+  res.json("berhasil");
 };
 
 router.get("/test", async (req, res, next) => {
