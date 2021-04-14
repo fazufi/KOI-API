@@ -8,6 +8,8 @@ module.exports = require('knex')({
     password: '',
     database: 'koi'
   }
+  
+  // pool: { min: 0, max: 200000, acquireTimeoutMillis: 600 * 100000 },
 
 })
 console.log("knex")
