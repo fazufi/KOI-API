@@ -88,35 +88,60 @@ const allPost = async (req, res) => {
   }
 };
 
-const programPut = async (req, res)=> {
+const programPut = async (req, res) => {
   try {
-  const result= await  req.db("program")
-    .update({...req.body, foto: req.file.filename })
-    .where({id: req.params.id});
-    res.json(result)
+    await req
+      .db("program")
+      .update({ ...req.body, foto: req.file.filename })
+      .where({ id: req.params.id });
+    res.json("berhasil");
   } catch (error) {
-    res.json(error)
+    res.json(error);
   }
-}
-const kegiatanPut = async (req, res)=> {
+};
+const kegiatanPut = async (req, res) => {
   try {
-    const result =req.db("program")
-    .update({...req.body, foto: req.file.filename })
-    .where({id: req.params.id});
-    res.json(result);
+    req
+      .db("program")
+      .update({ ...req.body, foto: req.file.filename })
+      .where({ id: req.params.id });
+    res.json("berhasil");
   } catch (error) {
-    res.json(error)
+    res.json(error);
   }
-}
+};
 
 const allPut = async (req, res) => {
   try {
-    const result= await req.db(req.params.table).update(req.body).where({id: req.params.id});
-    res.json(result);
+     await req
+      .db(req.params.table)
+      .update(req.body)
+      .where({ id: req.params.id });
+    res.json("berhasil");
+  } catch (error) {
+    res.json(error);
+  }
+};
+
+const allDelete = async (req, res) => {
+  try {
+    const data = await req.db(req.params.table);
+
+  const index = await data.findIndex((item) => {
+    return item.id == req.params.id;
+  });
+  console.log(index);
+  data.slice(index, 1)
+  // console.log(data);
+  //   data.destroy({
+  //   where: { id: req.params.id }
+  // });
+  res.json("berhasil");
   } catch (error) {
     res.json(error)
   }
-}
+  
+};
 
 const wilayahpost = async (req, res) => {
   await wilayah.forEach(async (prov) => {
@@ -162,8 +187,10 @@ router.post("/program", multer.single("foto"), programPost);
 router.post("/kegiatan", multer.single("foto"), kegiatanPost);
 router.post("/:table", allPost);
 
-router.put("/program/:id", multer.single("foto"), programPut );
+router.put("/program/:id", multer.single("foto"), programPut);
 router.put("/kegiatanPut:id", multer.single("foto"), kegiatanPut);
-router.put("/:table/:id", allPut)
+router.put("/:table/:id", allPut);
+
+router.delete("/:table/:id", allDelete);
 
 module.exports = router;

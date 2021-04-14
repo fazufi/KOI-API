@@ -18,4 +18,4 @@ app.use(express.static('public'))
 
 
 app.use("/", require("./routes"));
-app.listen(3005, () => console.log("Server started on port 5000"));
+app.listen(5000, () => console.log("Server started on port 5000"));
