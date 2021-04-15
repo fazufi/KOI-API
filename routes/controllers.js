@@ -1,13 +1,13 @@
-const fs = require('fs');
+const fs = require("fs");
 const wilayah = require("../JSON/wilayah.json");
 
-exports.pendaftaranGet = async (req, res) => {
+exports.rekapGet = async (req, res) => {
   if (req.params.p == "namaPeserta") {
     const result = await req
-      .db("pendaftaran")
+      .db("rekap")
       .select("peserta.nama as peserta", "program.nama as program")
-      .join("program", "program.id", "pendaftaran.program")
-      .join("peserta", "peserta.id", "pendaftaran.peserta")
+      .join("program", "program.id", "rekap.program")
+      .join("peserta", "peserta.id", "rekap.peserta")
       .where("peserta.nama", "=", req.params.v);
     // .where({program: '79f45e1d-97b5-11eb-99e7-7062b824f60e' })
     // .where({ ['peserta.nama']: 'joni' })
@@ -16,35 +16,35 @@ exports.pendaftaranGet = async (req, res) => {
   }
   if (req.params.p == "idPeserta") {
     const result = await req
-      .db("pendaftaran")
+      .db("rekap")
       .select("peserta.nama as peserta", "program.nama as program")
-      .join("program", "program.id", "pendaftaran.program")
-      .join("peserta", "peserta.id", "pendaftaran.peserta")
+      .join("program", "program.id", "rekap.program")
+      .join("peserta", "peserta.id", "rekap.peserta")
       .where("peserta.id", "=", req.params.v);
     res.send(result);
   }
   if (req.params.p == "namaProgram") {
     const result = await req
-      .db("pendaftaran")
+      .db("rekap")
       .select("peserta.nama as peserta", "program.nama as program")
-      .join("program", "program.id", "pendaftaran.program")
-      .join("peserta", "peserta.id", "pendaftaran.peserta")
+      .join("program", "program.id", "rekap.program")
+      .join("peserta", "peserta.id", "rekap.peserta")
       .where("program.nama", "=", req.params.v);
     res.send(result);
   }
   if (req.params.p == "idProgram") {
     const result = await req
-      .db("pendaftaran")
+      .db("rekap")
       .select("peserta.nama as peserta", "program.nama as program")
-      .join("program", "program.id", "pendaftaran.program")
-      .join("peserta", "peserta.id", "pendaftaran.peserta")
+      .join("program", "program.id", "rekap.program")
+      .join("peserta", "peserta.id", "rekap.peserta")
       .where("program.id", "=", req.params.v);
     res.send(result);
   }
 };
 
 exports.allGet = async (req, res) => {
-  if (req.params.table !== "pendaftaran") {
+  if (req.params.table !== "rekap") {
     const data = await req.db(req.params.table);
     if (req.params.id) {
       const result = data.find((item) => {
@@ -57,21 +57,10 @@ exports.allGet = async (req, res) => {
   }
 };
 
-exports.programPost = async (req, res) => {
+exports.galeriPost = async (req, res) => {
   try {
-    await req.db("program").insert({ ...req.body, foto: req.file.filename });
+    await req.db("galeri").insert({ foto: req.file.filename });
     res.send(req.file);
-    console.log(req.body);
-  } catch (error) {
-    res.json(error);
-  }
-};
-
-exports.kegiatanPost = async (req, res) => {
-  try {
-    await req.db("kegiatan").insert({ ...req.body, foto: req.file.filename });
-    res.send(req.file);
-    console.log(req.body);
   } catch (error) {
     res.json(error);
   }
@@ -86,24 +75,16 @@ exports.allPost = async (req, res) => {
   }
 };
 
-exports.programPut = async (req, res) => {
+exports.galeriPut = async (req, res) => {
   try {
-    await req
-      .db("program")
-      .update({ ...req.body, foto: req.file.filename })
-      .where({ id: req.params.id });
-    res.json("berhasil");
-  } catch (error) {
-    res.json(error);
-  }
-};
-exports.kegiatanPut = async (req, res) => {
-  try {
-    req
-      .db("program")
-      .update({ ...req.body, foto: req.file.filename })
-      .where({ id: req.params.id });
-    res.json("berhasil");
+    const table = await req.db("galeri");
+    const ref = await table.find((item) => {
+      return item.id == req.params.id;
+    });
+    const file = (await `${__dirname}/../public/`) + ref.foto;
+    await fs.unlinkSync(file);
+    await req.db("galeri").update({foto: req.file.filename}).where({ id: req.params.id });
+    res.json(req.file);
   } catch (error) {
     res.json(error);
   }
@@ -111,7 +92,7 @@ exports.kegiatanPut = async (req, res) => {
 
 exports.allPut = async (req, res) => {
   try {
-     await req
+    await req
       .db(req.params.table)
       .update(req.body)
       .where({ id: req.params.id });
@@ -121,29 +102,28 @@ exports.allPut = async (req, res) => {
   }
 };
 
-exports.allDelete = async (req, res) => {
+exports.galeriDel = async (req, res) => {
   try {
-    // const data =
-     await req.db(req.params.table)
-     .del()
-    .where({id: req.params.id})
-    
-
-  // const index = await data.findIndex((item) => {
-  //   return item.id == req.params.id;
-  // });
-  // console.log(index);
-  // fs.unlink(index)
-  // data.slice(index, 1)
-  // console.log(data);
-  //   data.destroy({
-  //   where: { id: req.params.id }
-  // });
-  res.json("berhasil");
+    const table = await req.db("galeri");
+    const ref = await table.find((item) => {
+      return item.id == req.params.id;
+    });
+    const file = (await `${__dirname}/../public/`) + ref.foto;
+    await fs.unlinkSync(file);
+    await req.db("galeri").del().where({ id: req.params.id });
+    res.json("berhasil");
   } catch (error) {
-    res.json(error)
+    res.json(error);
   }
-  
+};
+
+exports.allDel = async (req, res) => {
+  try {
+    await req.db(req.params.table).del().where({ id: req.params.id });
+    res.json("berhasil");
+  } catch (error) {
+    res.json(error);
+  }
 };
 
 exports.wilayahpost = async (req, res) => {
