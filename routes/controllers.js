@@ -1,4 +1,5 @@
 const fs = require("fs");
+const sharp = require("sharp");
 const wilayah = require("../JSON/wilayah.json");
 
 exports.rekapGet = async (req, res) => {
@@ -57,10 +58,47 @@ exports.allGet = async (req, res) => {
   }
 };
 
+// const fileName = req.file != null ? req.file.filename : null
+//  let witdth = 100;
+//  let height = 100;
+
+//  sharp(req.file)
+//  .resize(witdth, height).toFile(req.file.path)
+
+// sharp("input.jpg").rotate().resize(200).jpeg({ mozjpeg: true }).toBuffer();
+
 exports.galeriPost = async (req, res) => {
   try {
+    // await sharp(req.file)
+    //   .resize(100, 100)
+    //   .toFile(req.file.path);
     await req.db("galeri").insert({ foto: req.file.filename });
+    sharp(image)
+      .resize({
+        fit: sharp.fit.contain,
+        width: 800,
+        height: 800,
+      })
+      .jpeg({ quality: 80 })
+      .toBuffer();
+
     res.send(req.file);
+  } catch (error) {
+    res.json(error);
+  }
+};
+
+exports.pesertaPost = async (req, res) => {
+  try {
+    const ref = await req.db("peserta");
+    const no = (await ref.length) + 1;
+
+    await req.db("peserta").insert({
+      ...req.body,
+
+      NIM: new Date().getFullYear() + no.toString(),
+    });
+    res.json(req.body);
   } catch (error) {
     res.json(error);
   }
@@ -83,7 +121,10 @@ exports.galeriPut = async (req, res) => {
     });
     const file = (await `${__dirname}/../public/`) + ref.foto;
     await fs.unlinkSync(file);
-    await req.db("galeri").update({foto: req.file.filename}).where({ id: req.params.id });
+    await req
+      .db("galeri")
+      .update({ foto: req.file.filename })
+      .where({ id: req.params.id });
     res.json(req.file);
   } catch (error) {
     res.json(error);
