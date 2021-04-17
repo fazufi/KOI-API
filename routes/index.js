@@ -6,9 +6,9 @@ const ctrl = require("./controllers")
 
 router.get("/", (req, res, next) => res.json("welcome"));
 router.get("/rekap/:p/:v", ctrl.rekapGet);
+router.get("/wilayah", ctrl.wilayahGet);
 router.get(["/:table", "/:table/:id"], ctrl.allGet);
 
-router.post("/wilayah", ctrl.wilayahpost);
 router.post("/galeri", multer.single("foto"), ctrl.galeriPost);
 router.post("/peserta", ctrl.pesertaPost);
 router.post("/:table", ctrl.allPost);

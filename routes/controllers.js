@@ -1,9 +1,9 @@
 const fs = require("fs");
 const sharp = require("sharp");
+const path = require("path");
 const wilayah = require("../JSON/wilayah.json");
 
 exports.rekapGet = async (req, res) => {
-  
   if (req.params.p == "namaPeserta") {
     const result = await req
       .db("rekap")
@@ -81,7 +81,7 @@ exports.allGet = async (req, res) => {
       const result = data.find((item) => {
         return item.id == req.params.id;
       });
-     
+
       res.json(result);
     } else {
       res.json(data);
@@ -100,21 +100,23 @@ exports.allGet = async (req, res) => {
 
 exports.galeriPost = async (req, res) => {
   try {
-    await sharp(req.file.path)
-      .resize({
-        width: 10,
-        height: 10,
-      })
-      .toBuffer();
+    // console.log(req.file.path);
+    // await sharp(req.file.path)
+    //   .resize({
+    //     width: 10,
+    //     height: 10,
+    //   })
+    //   .toBuffer();
 
     //   console.log("siji", req.file);
     //   console.log("loro", req.file.path);
     //  await sharp(req.file.filename).resize(100, 100).toFile(req.file.path);
 
-    // await sharp(req.file)
-    //   .resize(100, 100)
-    //   .toFile(req.file.path);
-    // await req.db("galeri").insert({ foto: req.file.filename });
+    await sharp(req.file.path)
+      .resize(100)
+      .toFile(path.join(__dirname, "../public/small/", req.file.filename));
+
+    await req.db("galeri").insert({ foto: req.file.filename });
     // sharp(image)
     //   .resize({
     //     fit: sharp.fit.contain,
@@ -126,6 +128,7 @@ exports.galeriPost = async (req, res) => {
 
     res.send(req.file);
   } catch (error) {
+    console.log(error);
     res.status(500).send("errrrroooooor");
   }
 };
@@ -209,37 +212,55 @@ exports.allDel = async (req, res) => {
   }
 };
 
-exports.wilayahpost = async (req, res) => {
-  await wilayah.forEach(async (prov) => {
-    // await req.db("provinsi").insert({
-    //   id: prov.id,
-    //   nama: prov.name,
-    // });
-    await prov.regencies.forEach(async (kab) => {
-      // await req.db("kabupaten").insert({
-      //   id: kab.id,
-      //   nama: kab.name,
-      //   idprovinsi: kab.province_id
-      // });
-      await kab.districts.forEach(async (kec) => {
-        // await req.db("kecamatan").insert({
-        //   id: kec.id,
-        //   nama: kec.name,
-        //   idkabupaten: kec.regency_id
-        // })
-        await kec.villages.forEach(async (kel) => {
-          try {
-            await req.db("kelurahan").insert({
-              id: kel.id,
-              nama: kel.name,
-              idkecamatan: kel.district_id,
-            });
-          } catch (error) {
-            console.log(error);
-          }
-        });
-      });
-    });
-  });
-  res.json("berhasil");
+const checkProv = (res, iprov) => {
+  if (!iprov) {
+    res.end("Index provinsi harus diisi");
+  }
+};
+exports.wilayahGet = async (req, res) => {
+  try {
+    let result = "";
+    const { iprov, ikab, ikec, ikel } = req.query;
+    const iprovRequired = "Index provinsi harus diisi";
+    const ikabRequired = "Index kabupaten harus diisi";
+    if (ikec) {
+      if (!iprov) {
+        result = iprovRequired;
+      } else if (!ikab) {
+        result = ikabRequired;
+      } else {
+        result = wilayah[iprov].regencies[ikab].districts[ikec].villages.map((v) => v.name);
+      }
+    } else if (ikab) {
+      if (!iprov) {
+        result = iprovRequired;
+      } else {
+        result = wilayah[iprov].regencies[ikab].districts.map((v) => v.name);
+      }
+    } else if (iprov) {
+      result = wilayah[iprov].regencies.map((v) => v.name);
+    } else {
+      result = wilayah.map((v) => v.name);
+    }
+    return res.json(result);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json(error.message);
+  }
+  // for (let a = 0; a < wilayah.length; a++) {
+  //   if (a < 1) {
+  //     const prov = wilayah[a];
+  //     for (let b = 0; b < prov.regencies.length; b++) {
+  //       const kab = prov.regencies[b];
+  //       for (let c = 0; c < kab.districts.length; c++) {
+  //         const kec = kab.districts[c];
+  //         for (let d = 0; d < kec.villages.length; d++) {
+  //           const kel = kec.villages[d];
+  //           x++;
+  //           console.log(x);
+  //         }
+  //       }
+  //     }
+  //   }
+  // }
 };
