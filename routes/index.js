@@ -1,25 +1,10 @@
 const express = require("express");
 const router = express.Router();
 const multer = require("../helper/multer");
-const wilayah = require("../JSON/wilayah.json");
-const uku = require("../helper/knex");
+const ctrl = require("./controllers")
 
-const apiGet = async (req, res) => {
-  if (req.params.table == "wilayah") {
-    let rpId = req.params.id;
-    const index = wilayah.findIndex((v) => v.id == rpId);
-    rpId ? res.json(wilayah[index]) : res.json(wilayah);
-    console.log(wilayah[index]);
-  } else {
-    try {
-      const result = await req.db(req.params.table);
-      res.json(result);
-    } catch ({ code }) {
-      res.json(code);
-    }
-  }
-};
 
+<<<<<<< HEAD
 const peserta = async (req, res) => {
   try {
     await req.db("peserta").insert(req.body);
@@ -86,30 +71,21 @@ const wilayahpost = async (req, res) => {
   //     res.json(error);
   //   }
 };
-
-router.get("/test", async (req, res, next) => {
-  try {
-    const result = req
-      .db("kelas")
-      .select("peserta.nama as namaPeserta", "program.nama as namaProgram")
-      .join("program", "program.id", "kelas.program")
-      .join("peserta", "peserta.id", "kelas.peserta")
-      // .where({program: '79f45e1d-97b5-11eb-99e7-7062b824f60e' })
-      // .where('peserta.nama', '=', 'joni')
-      // .where({ ['peserta.nama']: 'joni' })
-      .where("peserta.nama", "like", "jon%");
-
-    res.send(await result);
-  } catch (error) {
-    res.json(error);
-  }
-});
-
-router.post("/provinsi", wilayahpost);
-router.post("/peserta", multer.single("foto"), peserta);
-router.post("/programLama", multer.single("foto"), programlama);
-router.post("/programBaru", multer.single("foto"), programBaru);
-router.get(["/:table", "/:table/:id"], apiGet);
+=======
 router.get("/", (req, res, next) => res.json("welcome"));
+router.get("/rekap/:p/:v", ctrl.rekapGet);
+router.get("/wilayah", ctrl.wilayahGet);
+router.get(["/:table", "/:table/:id"], ctrl.allGet);
+>>>>>>> 6eabfff24b43f80b1a77ad25143429628c238dee
+
+router.post("/galeri", multer.single("foto"), ctrl.galeriPost);
+router.post("/peserta", ctrl.pesertaPost);
+router.post("/:table", ctrl.allPost);
+
+router.put("/galeri/:id", multer.single("foto"), ctrl.galeriPut);
+router.put("/:table/:id", ctrl.allPut);
+
+router.delete("/galeri/:id", ctrl.galeriDel);
+router.delete("/:table/:id", ctrl.allDel);
 
 module.exports = router;
