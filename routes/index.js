@@ -31,9 +31,7 @@ const peserta = async (req, res) => {
 
 const programlama = async (req, res) => {
   try {
-    await req
-      .db("programLama")
-      .insert({ id: req.body.id, foto: req.file.filename });
+    await req.db("programLama").insert({ foto: req.file.filename });
 
     res.json(req.file);
   } catch (error) {
@@ -43,10 +41,7 @@ const programlama = async (req, res) => {
 
 const programBaru = async (req, res) => {
   try {
-    await req
-      .db("programBaru")
-      .update({ foto: req.file.filename })
-      .where({ id: 1 });
+    await req.db("programBaru").update({ foto: req.file.filename }).where({ id: 1 });
     res.json(req.file);
   } catch (error) {
     res.json(error);
