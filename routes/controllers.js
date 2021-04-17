@@ -3,6 +3,7 @@ const sharp = require("sharp");
 const wilayah = require("../JSON/wilayah.json");
 
 exports.rekapGet = async (req, res) => {
+  
   if (req.params.p == "namaPeserta") {
     const result = await req
       .db("rekap")
@@ -24,6 +25,15 @@ exports.rekapGet = async (req, res) => {
       .where("peserta.id", "=", req.params.v);
     res.send(result);
   }
+  if (req.params.p == "NIMPeserta") {
+    const result = await req
+      .db("rekap")
+      .select("peserta.nama as peserta", "program.nama as program")
+      .join("program", "program.id", "rekap.program")
+      .join("peserta", "peserta.id", "rekap.peserta")
+      .where("peserta.NIM", "=", req.params.v);
+    res.send(result);
+  }
   if (req.params.p == "namaProgram") {
     const result = await req
       .db("rekap")
@@ -42,6 +52,26 @@ exports.rekapGet = async (req, res) => {
       .where("program.id", "=", req.params.v);
     res.send(result);
   }
+  if (req.params.p == "ikhwan") {
+    const result = await req
+      .db("rekap")
+      .select("peserta.nama as peserta", "program.nama as program")
+      .join("program", "program.id", "rekap.program")
+      .join("peserta", "peserta.id", "rekap.peserta")
+      .where("peserta.gender", "=", "ikhwan")
+      .where("program.nama", "=", req.params.v);
+    res.send(result);
+  }
+  if (req.params.p == "akhwat") {
+    const result = await req
+      .db("rekap")
+      .select("peserta.nama as peserta", "program.nama as program")
+      .join("program", "program.id", "rekap.program")
+      .join("peserta", "peserta.id", "rekap.peserta")
+      .where("peserta.gender", "=", "akhwat")
+      .where("program.nama", "=", req.params.v);
+    res.send(result);
+  }
 };
 
 exports.allGet = async (req, res) => {
@@ -51,6 +81,7 @@ exports.allGet = async (req, res) => {
       const result = data.find((item) => {
         return item.id == req.params.id;
       });
+     
       res.json(result);
     } else {
       res.json(data);
@@ -69,22 +100,33 @@ exports.allGet = async (req, res) => {
 
 exports.galeriPost = async (req, res) => {
   try {
+    await sharp(req.file.path)
+      .resize({
+        width: 10,
+        height: 10,
+      })
+      .toBuffer();
+
+    //   console.log("siji", req.file);
+    //   console.log("loro", req.file.path);
+    //  await sharp(req.file.filename).resize(100, 100).toFile(req.file.path);
+
     // await sharp(req.file)
     //   .resize(100, 100)
     //   .toFile(req.file.path);
-    await req.db("galeri").insert({ foto: req.file.filename });
-    sharp(image)
-      .resize({
-        fit: sharp.fit.contain,
-        width: 800,
-        height: 800,
-      })
-      .jpeg({ quality: 80 })
-      .toBuffer();
+    // await req.db("galeri").insert({ foto: req.file.filename });
+    // sharp(image)
+    //   .resize({
+    //     fit: sharp.fit.contain,
+    //     width: 800,
+    //     height: 800,
+    //   })
+    //   .jpeg({ quality: 80 })
+    //   .toBuffer();
 
     res.send(req.file);
   } catch (error) {
-    res.json(error);
+    res.status(500).send("errrrroooooor");
   }
 };
 

@@ -8,9 +8,9 @@ router.get("/", (req, res, next) => res.json("welcome"));
 router.get("/rekap/:p/:v", ctrl.rekapGet);
 router.get(["/:table", "/:table/:id"], ctrl.allGet);
 
-router.post("/provinsi", ctrl.wilayahpost);
+router.post("/wilayah", ctrl.wilayahpost);
 router.post("/galeri", multer.single("foto"), ctrl.galeriPost);
-router.post("/peserta", multer.single("foto"), ctrl.pesertaPost);
+router.post("/peserta", ctrl.pesertaPost);
 router.post("/:table", ctrl.allPost);
 
 router.put("/galeri/:id", multer.single("foto"), ctrl.galeriPut);
