@@ -134,8 +134,15 @@ exports.galeriPut = async (req, res) => {
     const ref = await table.find((item) => {
       return item.id == req.params.id;
     });
-    const file = (await `${__dirname}/../public/`) + ref.foto;
-    await fs.unlinkSync(file);
+    const file1 = path.join(__dirname, "../public/large/", ref.foto)
+    const file2 = path.join(__dirname, "../public/small/", ref.foto)
+    await fs.unlinkSync(file1);
+    await fs.unlinkSync(file2);
+
+    await sharp(req.file.path)
+    .resize(200)
+    .toFile(path.join(__dirname, "../public/small/", req.file.filename));
+
     await req
       .db("galeri")
       .update({ foto: req.file.filename })
@@ -164,7 +171,8 @@ exports.galeriDel = async (req, res) => {
     const ref = await table.find((item) => {
       return item.id == req.params.id;
     });
-    const file = (await `${__dirname}/../public/`) + ref.foto;
+    // const file = (await `${__dirname}/../public/small`) + ref.foto;
+    const file = path.join(__dirname, "../public/small/", ref.foto)
     await fs.unlinkSync(file);
     await req.db("galeri").del().where({ id: req.params.id });
     res.json("berhasil");
@@ -214,5 +222,4 @@ exports.wilayahGet = async (req, res) => {
     console.log(error);
     res.status(500).json(error.message);
   }
-
 };
