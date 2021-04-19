@@ -1,11 +1,15 @@
 const express = require("express");
 const cors = require('cors')
 const bodyParser = require('body-parser')
+const favicon = require('serve-favicon');
+const path = require('path');
+
 
 const db = require("./helper/knex");
 
 const app = express();
 
+app.use(favicon(path.join(__dirname, 'public', 'small', 'favicon.ico') ) );
 app.use((req, res, next) => {
   req.db = db;
   next();

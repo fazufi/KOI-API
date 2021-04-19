@@ -3,7 +3,7 @@ const sharp = require("sharp");
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, `${__dirname}/../public`);
+    cb(null, `${__dirname}/../public/large`);
   },
   filename: (req, file, cb) => {
     let lastIndex = file.originalname.lastIndexOf(".");

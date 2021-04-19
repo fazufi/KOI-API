@@ -98,40 +98,10 @@ exports.allGet = async (req, res) => {
   }
 };
 
-// const fileName = req.file != null ? req.file.filename : null
-//  let witdth = 100;
-//  let height = 100;
-
-//  sharp(req.file)
-//  .resize(witdth, height).toFile(req.file.path)
-
-// sharp("input.jpg").rotate().resize(200).jpeg({ mozjpeg: true }).toBuffer();
-
 exports.galeriPost = async (req, res) => {
   try {
-    // console.log(req.file.path);
-    // await sharp(req.file.path)
-    //   .resize({
-    //     width: 10,
-    //     height: 10,
-    //   })
-    //   .toBuffer();
-
-    //   console.log("siji", req.file);
-    //   console.log("loro", req.file.path);
-    //  await sharp(req.file.filename).resize(100, 100).toFile(req.file.path);
-
-    await sharp(req.file.path).resize(100).toFile(path.join(__dirname, "../public/small/", req.file.filename));
-
+    await sharp(req.file.path).resize(200).toFile(path.join(__dirname, "../public/small/", req.file.filename));
     await req.db("galeri").insert({ foto: req.file.filename });
-    // sharp(image)
-    //   .resize({
-    //     fit: sharp.fit.contain,
-    //     width: 800,
-    //     height: 800,
-    //   })
-    //   .jpeg({ quality: 80 })
-    //   .toBuffer();
 
     res.send(req.file);
   } catch (error) {
@@ -171,8 +141,13 @@ exports.galeriPut = async (req, res) => {
     const ref = await table.find((item) => {
       return item.id == req.params.id;
     });
-    const file = (await `${__dirname}/../public/`) + ref.foto;
-    await fs.unlinkSync(file);
+    const file1 = path.join(__dirname, "../public/large/", ref.foto);
+    const file2 = path.join(__dirname, "../public/small/", ref.foto);
+    await fs.unlinkSync(file1);
+    await fs.unlinkSync(file2);
+
+    await sharp(req.file.path).resize(200).toFile(path.join(__dirname, "../public/small/", req.file.filename));
+
     await req.db("galeri").update({ foto: req.file.filename }).where({ id: req.params.id });
     res.json(req.file);
   } catch (error) {
@@ -195,7 +170,8 @@ exports.galeriDel = async (req, res) => {
     const ref = await table.find((item) => {
       return item.id == req.params.id;
     });
-    const file = (await `${__dirname}/../public/`) + ref.foto;
+    // const file = (await `${__dirname}/../public/small`) + ref.foto;
+    const file = path.join(__dirname, "../public/small/", ref.foto);
     await fs.unlinkSync(file);
     await req.db("galeri").del().where({ id: req.params.id });
     res.json("berhasil");
@@ -213,11 +189,6 @@ exports.allDel = async (req, res) => {
   }
 };
 
-const checkProv = (res, iprov) => {
-  if (!iprov) {
-    res.end("Index provinsi harus diisi");
-  }
-};
 exports.wilayahGet = async (req, res) => {
   try {
     let result = "";
@@ -248,20 +219,4 @@ exports.wilayahGet = async (req, res) => {
     console.log(error);
     res.status(500).json(error.message);
   }
-  // for (let a = 0; a < wilayah.length; a++) {
-  //   if (a < 1) {
-  //     const prov = wilayah[a];
-  //     for (let b = 0; b < prov.regencies.length; b++) {
-  //       const kab = prov.regencies[b];
-  //       for (let c = 0; c < kab.districts.length; c++) {
-  //         const kec = kab.districts[c];
-  //         for (let d = 0; d < kec.villages.length; d++) {
-  //           const kel = kec.villages[d];
-  //           x++;
-  //           console.log(x);
-  //         }
-  //       }
-  //     }
-  //   }
-  // }
 };
