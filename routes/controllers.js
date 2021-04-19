@@ -25,6 +25,15 @@ exports.rekapGet = async (req, res) => {
       .where("peserta.id", "=", req.params.v);
     res.send(result);
   }
+  if (req.params.p == "namaPeserta") {
+    const result = await req
+      .db("rekap")
+      .select("peserta.nama as peserta", "program.nama as program")
+      .join("program", "program.id", "rekap.program")
+      .join("peserta", "peserta.id", "rekap.peserta")
+      .where("peserta.nama", "=", req.params.v);
+    res.send(result);
+  }
   if (req.params.p == "NIMPeserta") {
     const result = await req
       .db("rekap")
@@ -112,9 +121,7 @@ exports.galeriPost = async (req, res) => {
     //   console.log("loro", req.file.path);
     //  await sharp(req.file.filename).resize(100, 100).toFile(req.file.path);
 
-    await sharp(req.file.path)
-      .resize(100)
-      .toFile(path.join(__dirname, "../public/small/", req.file.filename));
+    await sharp(req.file.path).resize(100).toFile(path.join(__dirname, "../public/small/", req.file.filename));
 
     await req.db("galeri").insert({ foto: req.file.filename });
     // sharp(image)
@@ -137,7 +144,7 @@ exports.pesertaPost = async (req, res) => {
   try {
     const ref = await req.db("peserta");
     const no = (await ref.length) + 1;
-
+    console.log("masuk");
     await req.db("peserta").insert({
       ...req.body,
 
@@ -166,10 +173,7 @@ exports.galeriPut = async (req, res) => {
     });
     const file = (await `${__dirname}/../public/`) + ref.foto;
     await fs.unlinkSync(file);
-    await req
-      .db("galeri")
-      .update({ foto: req.file.filename })
-      .where({ id: req.params.id });
+    await req.db("galeri").update({ foto: req.file.filename }).where({ id: req.params.id });
     res.json(req.file);
   } catch (error) {
     res.json(error);
@@ -178,10 +182,7 @@ exports.galeriPut = async (req, res) => {
 
 exports.allPut = async (req, res) => {
   try {
-    await req
-      .db(req.params.table)
-      .update(req.body)
-      .where({ id: req.params.id });
+    await req.db(req.params.table).update(req.body).where({ id: req.params.id });
     res.json("berhasil");
   } catch (error) {
     res.json(error);

@@ -4,6 +4,7 @@ module.exports = require("knex")({
   client: "mysql",
   connection: {
     host: "192.168.1.21",
+    port: "3306",
     user: "root",
     password: "",
     database: "koi",
