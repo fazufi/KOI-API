@@ -2,6 +2,7 @@ const fs = require("fs");
 const sharp = require("sharp");
 const path = require("path");
 const wilayah = require("../JSON/wilayah.json");
+const uku = require("../helper/knex");
 
 exports.rekapGet = async (req, res) => {
   if (req.params.p == "namaPeserta") {
@@ -111,19 +112,21 @@ exports.galeriPost = async (req, res) => {
 };
 
 exports.pesertaPost = async (req, res) => {
-  try {
-    const ref = await req.db("peserta");
-    const no = (await ref.length) + 1;
-    console.log("masuk");
-    await req.db("peserta").insert({
-      ...req.body,
+  await req.db("peserta").insert(req.body);
+  console.log("peserta");
 
-      NIM: new Date().getFullYear() + no.toString(),
-    });
-    res.json(req.body);
-  } catch (error) {
-    res.json(error);
-  }
+  const table = await req.db("peserta");
+  const peserta = await table.find((v) => {
+    return v.NIM == req.body.NIM;
+  });
+  const idPeserta = await peserta.id;
+  const program = await req.db("program");
+  console.log("program");
+  console.log(program);
+  const idProgram = await program[program.length - 1].id;
+  await req.db("rekap").insert({ peserta: idPeserta, program: idProgram });
+
+  res.json(req.body);
 };
 
 exports.allPost = async (req, res) => {
