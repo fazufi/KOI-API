@@ -2,7 +2,8 @@ const fs = require("fs");
 const sharp = require("sharp");
 const path = require("path");
 const wilayah = require("../JSON/wilayah.json");
-const uku = require("../helper/knex");
+// const uku = require("../helper/knex");
+// const uuid = require("uuid");
 
 exports.rekapGet = async (req, res) => {
   if (req.params.p == "namaPeserta") {
@@ -86,16 +87,16 @@ exports.rekapGet = async (req, res) => {
 
 exports.allGet = async (req, res) => {
   if (req.params.table !== "rekap") {
-    const data = await req.db(req.params.table);
-    if (req.params.id) {
-      const result = data.find((item) => {
-        return item.id == req.params.id;
-      });
-
-      res.json(result);
-    } else {
-      res.json(data);
-    }
+    const data = await req.db(req.params.table).modify((builder) => {
+      if (req.params.table == "peserta") {
+        console.log("urutkan by nim");
+        builder.orderBy("nim", "asc");
+      }
+      if (req.params.id) {
+        builder.where({ id: req.params.id });
+      }
+    });
+    res.json(data.length > 1 ? data : data[0]);
   }
 };
 
@@ -112,21 +113,33 @@ exports.galeriPost = async (req, res) => {
 };
 
 exports.pesertaPost = async (req, res) => {
-  await req.db("peserta").insert(req.body);
-  console.log("peserta");
+  const findPeserta = await req.db("peserta").where({ email: req.body.email });
+  let nim = "";
+  if (findPeserta.length) {
+    console.log("update");
+    nim = findPeserta[0].nim;
+    await req.db("peserta").update(req.body).where({ nim });
+  } else {
+    console.log("create");
+    nim = new Date().getFullYear().toString().slice(2, 4) + Math.floor(Math.random() * 5);
+    req.body.nim = nim;
+    await req.db("peserta").insert(req.body);
+  }
+  const [result] = await req.db("peserta").where({ nim });
 
-  const table = await req.db("peserta");
-  const peserta = await table.find((v) => {
-    return v.NIM == req.body.NIM;
-  });
-  const idPeserta = await peserta.id;
-  const program = await req.db("program");
-  console.log("program");
-  console.log(program);
-  const idProgram = await program[program.length - 1].id;
-  await req.db("rekap").insert({ peserta: idPeserta, program: idProgram });
+  // console.log("peserta", idPeserta);
+  // const table = await req.db("peserta");
+  // const peserta = await table.find((v) => {
+  //   return v.NIM == req.body.NIM;
+  // });
+  // const idPeserta = await peserta.id;
+  // const program = await req.db("program");
+  // console.log("program");
+  // console.log(program);
+  // const idProgram = await program[program.length - 1].id;
+  // await req.db("rekap").insert({ peserta: idPeserta, program: idProgram });
 
-  res.json(req.body);
+  res.json(result);
 };
 
 exports.allPost = async (req, res) => {
