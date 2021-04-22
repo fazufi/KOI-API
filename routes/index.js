@@ -9,6 +9,7 @@ router.get("/wilayah", ctrl.wilayahGet);
 router.get(["/:table", "/:table/:id"], ctrl.allGet);
 
 router.post("/galeri", multer.single("foto"), ctrl.galeriPost);
+router.post("/program", ctrl.programPost);
 router.post("/peserta", ctrl.pesertaPost);
 router.post("/:table", ctrl.allPost);
 

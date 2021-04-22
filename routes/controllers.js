@@ -2,7 +2,6 @@ const fs = require("fs");
 const sharp = require("sharp");
 const path = require("path");
 const wilayah = require("../JSON/wilayah.json");
-const uku = require("../helper/knex");
 
 exports.rekapGet = async (req, res) => {
   if (req.params.p == "namaPeserta") {
@@ -101,7 +100,9 @@ exports.allGet = async (req, res) => {
 
 exports.galeriPost = async (req, res) => {
   try {
-    await sharp(req.file.path).resize(200).toFile(path.join(__dirname, "../public/small/", req.file.filename));
+    await sharp(req.file.path)
+      .resize(200)
+      .toFile(path.join(__dirname, "../public/small/", req.file.filename));
     await req.db("galeri").insert({ foto: req.file.filename });
 
     res.send(req.file);
@@ -123,10 +124,25 @@ exports.pesertaPost = async (req, res) => {
   const program = await req.db("program");
   console.log("program");
   console.log(program);
-  const idProgram = await program[program.length - 1].id;
+  const idProgram = await program[0].id;
   await req.db("rekap").insert({ peserta: idPeserta, program: idProgram });
 
   res.json(req.body);
+};
+
+exports.programPost = async (req, res) => {
+  try {
+    await req.db("program").insert(req.body);
+    const program = await req.db("program");
+    const sorted = await program.sort((a, b) => {
+      return b.id - a.id;
+    });
+    console.log(sorted);
+
+    res.json(req.body);
+  } catch (error) {
+    res.json(error);
+  }
 };
 
 exports.allPost = async (req, res) => {
@@ -149,9 +165,14 @@ exports.galeriPut = async (req, res) => {
     await fs.unlinkSync(file1);
     await fs.unlinkSync(file2);
 
-    await sharp(req.file.path).resize(200).toFile(path.join(__dirname, "../public/small/", req.file.filename));
+    await sharp(req.file.path)
+      .resize(200)
+      .toFile(path.join(__dirname, "../public/small/", req.file.filename));
 
-    await req.db("galeri").update({ foto: req.file.filename }).where({ id: req.params.id });
+    await req
+      .db("galeri")
+      .update({ foto: req.file.filename })
+      .where({ id: req.params.id });
     res.json(req.file);
   } catch (error) {
     res.json(error);
@@ -160,7 +181,10 @@ exports.galeriPut = async (req, res) => {
 
 exports.allPut = async (req, res) => {
   try {
-    await req.db(req.params.table).update(req.body).where({ id: req.params.id });
+    await req
+      .db(req.params.table)
+      .update(req.body)
+      .where({ id: req.params.id });
     res.json("berhasil");
   } catch (error) {
     res.json(error);
@@ -204,7 +228,9 @@ exports.wilayahGet = async (req, res) => {
       } else if (!ikab) {
         result = ikabRequired;
       } else {
-        result = wilayah[iprov].regencies[ikab].districts[ikec].villages.map((v) => v.name);
+        result = wilayah[iprov].regencies[ikab].districts[ikec].villages.map(
+          (v) => v.name
+        );
       }
     } else if (ikab) {
       if (!iprov) {
