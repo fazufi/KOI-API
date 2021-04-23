@@ -43,7 +43,7 @@ exports.post = async (req, res) => {
         (await new Date().getFullYear().toString().slice(2, 4)) +
         Math.floor(Math.random() * 5);
       req.body.created_at = await new Date();
-      req.body.updated_at = 0
+      req.body.updated_at = await 0
       await req.db("peserta").insert(req.body);
     } else {
       req.body.updated_at = await new Date();

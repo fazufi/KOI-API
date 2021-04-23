@@ -3,7 +3,7 @@ const router = express.Router();
 const multer = require("../../helper/multer");
 
 router.get("/", (req, res, next) => res.json("welcome"));
-// router.get("/rekap/:p/:v", ctrl.rekapGet);
+
 
 const wilayah = require("../controllers/wilayah");
 router.get("/wilayah", wilayah.get);
@@ -29,15 +29,11 @@ router.put("/program/:id", program.put)
 router.delete("/program", program.del)
 
 const rekap = require("../controllers/rekap")
-router.get("/rekap/program/:p", rekap.byProgramGet)
-router.get("/rekap/peserta/:p", rekap.byPesertaGet)
-// router.post("/program", ctrl.programPost);
+router.get("/rekap/program/:p", rekap.getByProgram)
+router.get("/rekap/peserta/:p", rekap.getByPeserta)
+router.put("/rekap/:id", rekap.put)
+router.delete("/rekap/:id", rekap.del)
 
-// router.post("/:table", ctrl.allPost);
-
-// router.put("/:table/:id", ctrl.allPut);
-
-// router.delete("/galeri/:id", ctrl.galeriDel);
-// router.delete("/:table/:id", ctrl.allDel);
-
+const payment = require("../controllers/payment")
+router.post("/payment", payment.payment);
 module.exports = router;

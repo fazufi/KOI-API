@@ -3,7 +3,7 @@ const cors = require("cors");
 const bodyParser = require("body-parser");
 const favicon = require("serve-favicon");
 const path = require("path");
-const payment = require("./src/routes/payment");
+
 
 const db = require("./helper/knex");
 
@@ -20,6 +20,6 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static("public"));
 
-app.post("/payment", payment);
+
 app.use("/", require("./src/routes"));
 app.listen(5000, () => console.log("Server started on port 5000"));

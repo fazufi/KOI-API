@@ -1,47 +1,4 @@
-
-
-exports.currentGet = async (req, res) => {
-  try {
-    const p = req.params.p;
-    const result = req.db("program").where({ id: p }).orWhere({ nama: p });
-    res.json(result);
-  } catch (error) {
-    res.send(error);
-    console.log(error);
-  }
-};
-
-exports.allPost = async (req, res) => {
-  try {
-    await req.db(req.params.table).insert(req.body);
-    res.json(req.body);
-  } catch (error) {
-    res.json(error);
-  }
-};
-
-exports.allPut = async (req, res) => {
-  try {
-    await req
-      .db(req.params.table)
-      .update(req.body)
-      .where({ id: req.params.id });
-    res.json("berhasil");
-  } catch (error) {
-    res.json(error);
-  }
-};
-
-exports.allDel = async (req, res) => {
-  try {
-    await req.db(req.params.table).del().where({ id: req.params.id });
-    res.json("berhasil");
-  } catch (error) {
-    res.json(error);
-  }
-};
-
-exports.byProgramGet = async (req, res) => {
+exports.getByProgram = async (req, res) => {
   try {
     const p = req.params.p;
     const result = await req
@@ -59,7 +16,7 @@ exports.byProgramGet = async (req, res) => {
   }
 };
 
-exports.byPesertaGet = async (req, res) => {
+exports.getByPeserta = async (req, res) => {
   try {
     const p = req.params.p;
     const result = await req
@@ -77,10 +34,37 @@ exports.byPesertaGet = async (req, res) => {
       .orWhere("peserta.kecamatan", "like", `%${p}%`)
       .orWhere("peserta.kelurahan", "like", `%${p}%`)
       .orWhere("peserta.created_at", "like", `%${p}%`);
+    //jadikan query
     res.json(result);
   } catch (error) {
     res.send(error);
     console.log(error);
   }
- 
 };
+
+
+
+exports.put = async (req, res) => {
+  try {
+    await req
+      .db("rekap")
+      .update(req.body)
+      .where({ id: req.params.id });
+    res.json("berhasil diupdate");
+  } catch (error) {
+    res.json(error);
+    console.log(error);
+  }
+};
+
+exports.del = async (req, res) => {
+  try {
+    await req.db("rekap").del().where({ id: req.params.id });
+    res.json("berhasil dihapus");
+  } catch (error) {
+    res.json(error);
+    console.log(error);
+  }
+};
+
+

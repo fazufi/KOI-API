@@ -1,8 +1,3 @@
-const fs = require("fs");
-const sharp = require("sharp");
-const path = require("path");
-const wilayah = require("../../JSON/wilayah.json");
-
 exports.allGet = async (req, res) => {
   try {
     const result = req.db("program").orderBy("created_at", "desc");
@@ -19,7 +14,7 @@ exports.currentGet = async (req, res) => {
     const result = req.db("program").where({ id: p }).orWhere({ nama: p });
     res.json(result);
   } catch (error) {
-    res.send(error)
+    res.send(error);
     console.log(error);
   }
 };
