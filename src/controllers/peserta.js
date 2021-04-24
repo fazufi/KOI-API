@@ -32,23 +32,6 @@ exports.currentGet = async (req, res) => {
   }
 };
 
-const zeroPad = (num, places) => String(num).padStart(places, "0");
-const k = 12 + 1;
-// if (k.toString().length > 1){
-console.log(zeroPad(k, 1)); // "05"
-// }
-// ganti tahun:
-const h = new Date().getFullYear();
-console.log(h);
-if (h !== 2019) {
-  console.log("2021" + 1);
-}
-// console.log( );
-
-// console.log(zeroPad(5, 4)); // "0005"
-// console.log(zeroPad(5, 6)); // "000005"
-// console.log(zeroPad(1234, 2)); // "1234"
-
 exports.post = async (req, res) => {
   try {
     const email = req.body.email;
