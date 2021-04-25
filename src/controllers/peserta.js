@@ -1,6 +1,6 @@
 exports.allGet = async (req, res) => {
   try {
-    const result = await req.db("peserta").orderBy("nim", "asc");
+    const result = await req.db("peserta").orderBy("created_at", "asc");
     res.json(result);
   } catch (error) {
     res.send(error);
@@ -24,7 +24,7 @@ exports.currentGet = async (req, res) => {
       .orWhere("kecamatan", "like", `%${p}%`)
       .orWhere("kelurahan", "like", `%${p}%`)
       .orWhere("created_at", "like", `%${p}%`)
-      .orderBy("nim", "asc");
+      .orderBy("created_at", "asc");
     res.json(result);
   } catch (error) {
     res.send(error);
@@ -34,7 +34,7 @@ exports.currentGet = async (req, res) => {
 
 exports.post = async (req, res) => {
   try {
-    let {
+    const {
       nim,
       nama,
       email,
@@ -54,7 +54,7 @@ exports.post = async (req, res) => {
     const [isPeserta] = await req.db("peserta").where({ email, password });
 
     if (!isPeserta) {
-      const pst = await req.db("peserta").orderBy("nim", "asc");
+      const pst = await req.db("peserta").orderBy("created_at", "asc");
       const i = (await pst.length) - 1;
       let key = "";
       i == -1
@@ -63,10 +63,10 @@ exports.post = async (req, res) => {
       const zeroPad = async (num, places) =>
         await String(num).padStart(places, "0");
 
-      nim =
+      req.body.nim =
         (await new Date().getFullYear().toString()) + (await zeroPad(key, 3));
-      created_at = await new Date();
-      updated_at = 0;
+      req.body.created_at = await new Date();
+      req.body.updated_at = 0;
       if (
         (nama,
         email,
@@ -81,23 +81,7 @@ exports.post = async (req, res) => {
         gender,
         golongan)
       ) {
-        await req.db("peserta").insert({
-          nim,
-          nama,
-          email,
-          password,
-          telepon,
-          lahir,
-          alamat,
-          provinsi,
-          kabupaten,
-          kecamatan,
-          kelurahan,
-          gender,
-          golongan,
-          created_at,
-          updated_at,
-        });
+        await req.db("peserta").insert(req.body);
 
         const peserta = await req.db("peserta").where({ email });
         const program = await req.db("program").orderBy("created_at", "asc");

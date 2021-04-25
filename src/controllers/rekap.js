@@ -30,7 +30,7 @@ exports.getByPeserta = async (req, res) => {
       .orWhere("peserta.gender", "=", p)
       .orWhere("peserta.alamat", "like", `%${p}%`)
       .orWhere("peserta.provinsi", "like", `%${p}%`)
-      .orderBy("peserta.kabupaten", "like", `%${p}%`)
+      .orWhere("peserta.kabupaten", "like", `%${p}%`)
       .orWhere("peserta.kecamatan", "like", `%${p}%`)
       .orWhere("peserta.kelurahan", "like", `%${p}%`)
       .orWhere("peserta.created_at", "like", `%${p}%`);
