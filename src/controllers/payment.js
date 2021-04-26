@@ -1,7 +1,7 @@
 
 const midtransClient = require("midtrans-client");
 
-function payment(req, res) {
+exports.payment = (req, res) => {
   let snap = new midtransClient.Snap({
     isProduction: false,
     serverKey: "SB-Mid-server-r4bv1xR4n-F1kMeLWi-BSxU2",
@@ -21,4 +21,4 @@ function payment(req, res) {
     });
 }
 
-module.exports = payment;
+
