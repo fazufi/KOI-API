@@ -78,4 +78,4 @@ exports.del = async (req, res) => {
     res.json(error);
     console.log(error);
   }
-};
+};  

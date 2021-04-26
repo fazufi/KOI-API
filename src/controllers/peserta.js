@@ -50,7 +50,7 @@ exports.post = async (req, res) => {
       golongan,
       created_at,
       updated_at,
-    } =  req.body;
+    } = req.body;
     const [isPeserta] = await req.db("peserta").where({ email, password });
 
     if (!isPeserta) {
@@ -59,7 +59,9 @@ exports.post = async (req, res) => {
       let key = "";
       i == -1
         ? (key = 1)
-        : (key = (await parseInt(pst[i].nim.toString().slice(4))) + 1);
+        : pst[i].nim.toString().slice(0, 4) == (await new Date().getFullYear())
+        ? (key = (await parseInt(pst[i].nim.toString().slice(4))) + 1)
+        : (key = 1);
       const zeroPad = async (num, places) =>
         await String(num).padStart(places, "0");
 
