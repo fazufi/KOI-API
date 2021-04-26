@@ -1,3 +1,4 @@
+
 const midtransClient = require("midtrans-client");
 
 function payment(req, res) {
@@ -11,17 +12,8 @@ function payment(req, res) {
   snap
     .createTransaction(parameter)
     .then((transaction) => {
-      // transaction token
-      let transactionToken = transaction.token;
-      console.log("transactionToken:", transactionToken);
-
-      // transaction redirect url
-      let transactionRedirectUrl = transaction.redirect_url;
-      console.log("transactionRedirectUrl:", transactionRedirectUrl);
-      res.send({
-        transactionToken: transactionToken,
-        transactionRedirectUrl: transactionRedirectUrl,
-      });
+      console.log(transaction);
+      res.json(transaction);
     })
     .catch((e) => {
       console.log("Error occured:", e.message);

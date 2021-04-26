@@ -6,8 +6,34 @@ const path = require("path");
 const payment = require("./routes/payment");
 
 const db = require("./helper/knex");
+const checkpayment = require("./routes/checkpayment");
+const rekap = require("./routes/rekap");
 
 const app = express();
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+// const { Client } = require('whatsapp-web.js');
+// const qrcode = require('qrcode-terminal');
+
+// const client = new Client();
+
+// client.on('qr', (qr) => {
+//   qrcode.generate(qr, { small: true })// Generate and scan this code with your phone
+//   console.log('QR RECEIVED', qr);
+// });
+
+// client.on('ready', () => {
+//   console.log('Client is ready!');
+// });
+
+// client.on('message', msg => {
+//   if (msg.body == '!ping') {
+//     msg.reply('pong');
+//   }
+// });
+
+// client.initialize();
+///////////////////////////////////////////////////////////////////////////////////////////////////
 
 app.use(favicon(path.join(__dirname, "public", "small", "favicon.ico")));
 app.use((req, res, next) => {
@@ -20,6 +46,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static("public"));
 
+app.post("/rekappembayaran", rekap);
+app.post("/checkpayment", checkpayment);
 app.post("/payment", payment);
 app.use("/", require("./routes"));
 app.listen(5000, () => console.log("Server started on port 5000"));
