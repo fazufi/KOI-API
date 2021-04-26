@@ -28,7 +28,7 @@ router.post("/program", program.post)
 router.put("/program/:id", program.put)
 router.delete("/program", program.del)
 
-const rekap = require("../controllers/rekap")
+const rekap = require("../controllers/rekap");
 router.get("/rekap/program/:p", rekap.getByProgram)
 router.get("/rekap/peserta/:p", rekap.getByPeserta)
 router.put("/rekap/:id", rekap.put)
@@ -36,4 +36,14 @@ router.delete("/rekap/:id", rekap.del)
 
 const payment = require("../controllers/payment")
 router.post("/payment", payment.payment);
+
+const checkpayment = require("../controllers/checkpayment")
+router.post("/checkpayment", checkpayment.checkpayment)
+
+const rekappembayaran= require("../controllers/rekappembayaran")
+router.get("/rekappembayaran", rekappembayaran.allGet )
+router.post("/rekappembayaran", rekappembayaran.result);
+
+
 module.exports = router;
+

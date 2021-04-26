@@ -5,8 +5,8 @@ const favicon = require("serve-favicon");
 const path = require("path");
 
 const db = require("./helper/knex");
-const checkpayment = require("./routes/checkpayment");
-const rekap = require("./routes/rekap");
+// const checkpayment = require("./routes/checkpayment");
+// const rekap = require("./routes/rekap");
 
 const app = express();
 
@@ -34,7 +34,7 @@ const app = express();
 // client.initialize();
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-app.use(favicon(path.join(__dirname, "public", "small", "favicon.ico")));
+
 app.use(favicon(path.join(__dirname, "public", "favicon.ico")));
 app.use((req, res, next) => {
   req.db = db;
@@ -46,9 +46,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static("public"));
 
-app.post("/rekappembayaran", rekap);
-app.post("/checkpayment", checkpayment);
-app.post("/payment", payment);
-app.use("/", require("./routes"));
+// app.post("/rekappembayaran", rekap);
+// app.post("/checkpayment", checkpayment);
+// app.post("/payment", payment);
 app.use("/", require("./src/routes"));
 app.listen(5000, () => console.log("Server started on port 5000"));
