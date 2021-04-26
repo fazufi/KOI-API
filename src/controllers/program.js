@@ -1,6 +1,7 @@
 exports.allGet = async (req, res) => {
   try {
-    const result = req.db("program").orderBy("created_at", "desc");
+    const result = await req.db("program").orderBy("created_at", "desc");
+    console.log("iki");
     res.json(result);
   } catch (error) {
     res.send(error);
@@ -11,13 +12,13 @@ exports.allGet = async (req, res) => {
 exports.currentGet = async (req, res) => {
   try {
     const p = req.params.p;
-    const result = req.db("program").where({ id: p }).orWhere({ nama: p });
+    const result = await req.db("program").where({ id: p }).orWhere({ nama: p });
     res.json(result);
   } catch (error) {
     res.send(error);
     console.log(error);
   }
-};
+};  
 
 exports.post = async (req, res) => {
   try {
