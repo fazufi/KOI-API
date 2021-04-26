@@ -4,7 +4,6 @@ const multer = require("../../helper/multer");
 
 router.get("/", (req, res, next) => res.json("welcome"));
 
-
 const wilayah = require("../controllers/wilayah");
 router.get("/wilayah", wilayah.get);
 
@@ -15,7 +14,7 @@ router.post("/galeri", multer.single("foto"), galeri.post);
 router.put("/galeri/:id", multer.single("foto"), galeri.put);
 router.delete("/galeri/:id", galeri.del);
 
-const peserta = require("../controllers/peserta");  
+const peserta = require("../controllers/peserta");
 router.get("/peserta", peserta.allGet);
 router.get("/peserta/:p", peserta.currentGet);
 router.post("/peserta", peserta.post);
@@ -28,12 +27,16 @@ router.post("/program", program.post)
 router.put("/program/:id", program.put)
 router.delete("/program", program.del)
 
-const rekap = require("../controllers/rekap")
-router.get("/rekap/program/:p", rekap.getByProgram)
-router.get("/rekap/peserta/:p", rekap.getByPeserta)
-router.put("/rekap/:id", rekap.put)
-router.delete("/rekap/:id", rekap.del)
+// const rekap = require("../controllers/rekap")
+// router.get("/rekap/program/:p", rekap.getByProgram)
+// router.get("/rekap/peserta/:p", rekap.getByPeserta)
+// router.put("/rekap/:id", rekap.put)
+// router.delete("/rekap/:id", rekap.del)
 
 const payment = require("../controllers/payment")
 router.post("/payment", payment.payment);
+
+const pembayaran = require("../controllers/pembayaran");
+router.get("/pembayaran", pembayaran.allGet);
+
 module.exports = router;

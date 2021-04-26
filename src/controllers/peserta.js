@@ -69,17 +69,17 @@ exports.post = async (req, res) => {
       req.body.updated_at = 0;
       if (
         (nama,
-        email,
-        password,
-        telepon,
-        lahir,
-        alamat,
-        provinsi,
-        kabupaten,
-        kecamatan,
-        kelurahan,
-        gender,
-        golongan)
+          email,
+          password,
+          telepon,
+          lahir,
+          alamat,
+          provinsi,
+          kabupaten,
+          kecamatan,
+          kelurahan,
+          gender,
+          golongan)
       ) {
         await req.db("peserta").insert(req.body);
 
