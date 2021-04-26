@@ -10,7 +10,7 @@ exports.allGet = async (req, res) => {
 
 exports.currentGet = async (req, res) => {
   try {
-    const p = req.params.p;
+    const p = await req.params.p;
     const result = await req
       .db("peserta")
       .where({ id: p })
@@ -50,7 +50,7 @@ exports.post = async (req, res) => {
       golongan,
       created_at,
       updated_at,
-    } = req.body;
+    } =  req.body;
     const [isPeserta] = await req.db("peserta").where({ email, password });
 
     if (!isPeserta) {

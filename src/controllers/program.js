@@ -12,7 +12,7 @@ exports.allGet = async (req, res) => {
 exports.currentGet = async (req, res) => {
   try {
     const p = req.params.p;
-    const result = await req.db("program").where({ id: p }).orWhere({ nama: p });
+    const [result] = await req.db("program").where({ id: p }).orWhere({ nama: p });
     res.json(result);
   } catch (error) {
     res.send(error);

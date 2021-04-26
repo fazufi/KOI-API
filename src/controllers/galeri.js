@@ -14,10 +14,7 @@ exports.allGet = async (req, res) => {
 
 exports.currentGet = async (req, res) => {
   try {
-    const result = await req
-      .db("galeri")
-
-      .where({ id: req.params.id });
+    const [result] = await req.db("galeri").where({ id: req.params.id });
     res.json(result);
   } catch (error) {
     res.send(error);
@@ -27,7 +24,6 @@ exports.currentGet = async (req, res) => {
 
 exports.post = async (req, res) => {
   try {
-    req.body.created_at = new Date();
     await sharp(req.file.path)
       .resize(200)
       .toFile(path.join(__dirname, "../../public/small/", req.file.filename));
@@ -44,18 +40,17 @@ exports.post = async (req, res) => {
 
 exports.put = async (req, res) => {
   try {
-    const table = await req.db("galeri");
-    const ref = await table.find((item) => {
-      return item.id == req.params.id;
-    });
-    const file1 = path.join(__dirname, "../../public/large/", ref.foto);
-    const file2 = path.join(__dirname, "../../public/small/", ref.foto);
-    await fs.unlinkSync(file1);
-    await fs.unlinkSync(file2);
+    const [ref] = await req.db("galeri").where({ id: req.params.id });
+
+    const large = await path.join(__dirname, "../../public/large/", ref.foto);
+    const small = await path.join(__dirname, "../../public/small/", ref.foto);
+    await fs.unlinkSync(large);
+    await fs.unlinkSync(small);
 
     await sharp(req.file.path)
       .resize(200)
       .toFile(path.join(__dirname, "../../public/small/", req.file.filename));
+
     req.body.updated_at = await new Date();
     await req
       .db("galeri")
@@ -69,14 +64,14 @@ exports.put = async (req, res) => {
 
 exports.del = async (req, res) => {
   try {
-    const table = await req.db("galeri");
-    const ref = await table.find((item) => {
-      return item.id == req.params.id;
-    });
-    const file = path.join(__dirname, "../../public/small/", ref.foto);
-    await fs.unlinkSync(file);
+    const [ref] = await req.db("galeri").where({ id: req.params.id });
+
+    const large = await path.join(__dirname, "../../public/large/", ref.foto);
+    const small = await path.join(__dirname, "../../public/small/", ref.foto);
+    await fs.unlinkSync(large);
+    await fs.unlinkSync(small);
     await req.db("galeri").del().where({ id: req.params.id });
-    res.json("berhasil");
+    res.json("berhasil dihapus");
   } catch (error) {
     res.json(error);
   }

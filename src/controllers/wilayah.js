@@ -3,7 +3,7 @@ const wilayah = require("../../JSON/wilayah.json");
 exports.get = async (req, res) => {
   try {
     let result = "";
-    const { iprov, ikab, ikec } = req.query;
+    const { iprov, ikab, ikec } =  req.query;
     const iprovRequired = "Index provinsi harus diisi";
     const ikabRequired = "Index kabupaten harus diisi";
     if (ikec) {
