@@ -1,7 +1,10 @@
+const fs = require("fs");
+const sharp = require("sharp");
+const path = require("path");
+
 exports.allGet = async (req, res) => {
   try {
     const result = await req.db("program").orderBy("created_at", "desc");
-   
     res.json(result);
   } catch (error) {
     res.send(error);
@@ -12,27 +15,31 @@ exports.allGet = async (req, res) => {
 exports.currentGet = async (req, res) => {
   try {
     const p = req.params.p;
-    const [result] = await req.db("program").where({ id: p }).orWhere({ nama: p });
+    const [result] = await req
+      .db("program")
+      .where({ id: p })
+      .orWhere({ nama: p });
     res.json(result);
   } catch (error) {
     res.send(error);
     console.log(error);
   }
-};  
+};
 
 exports.post = async (req, res) => {
   try {
     await sharp(req.file.path)
       .resize(200)
       .toFile(path.join(__dirname, "../../public/small/", req.file.filename));
+    req.body.foto = await req.file.filename;
     req.body.created_at = await new Date();
     req.body.updated_at = await 0;
-    await req.db("program").insert({ ...req.body, foto: req.file.filename });
+    await req.db("program").insert(req.body);
 
-    res.send(req.file);
+    res.json(req.body);
   } catch (error) {
     console.log(error);
-    res.send(error)
+    res.send(error);
   }
 };
 
@@ -48,13 +55,10 @@ exports.put = async (req, res) => {
     await sharp(req.file.path)
       .resize(200)
       .toFile(path.join(__dirname, "../../public/small/", req.file.filename));
-
+    req.body.foto = await req.file.filename;
     req.body.updated_at = await new Date();
-    await req
-      .db("program")
-      .update({ ...req.body, foto: req.file.filename })
-      .where({ id: req.params.id });
-    res.json(req.file);
+    await req.db("program").update(req.body).where({ id: req.params.id });
+    res.json(req.body);
   } catch (error) {
     res.json(error);
   }
@@ -72,6 +76,6 @@ exports.del = async (req, res) => {
     res.json("berhasil dihapus");
   } catch (error) {
     res.json(error);
+    console.log(error);
   }
 };
-

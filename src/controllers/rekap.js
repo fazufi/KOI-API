@@ -1,3 +1,13 @@
+exports.currentGet = async (req, res) =>{
+  try {
+    const result = await req.db("rekap").where({id: req.params.id})
+    res.json(result)
+  } catch (error) {
+    
+  }
+} 
+
+
 exports.getByProgram = async (req, res) => {
   try {
     const p = req.params.p;
@@ -34,7 +44,7 @@ exports.getByPeserta = async (req, res) => {
       .orWhere("peserta.kecamatan", "like", `%${p}%`)
       .orWhere("peserta.kelurahan", "like", `%${p}%`)
       .orWhere("peserta.created_at", "like", `%${p}%`);
-    //jadikan query
+    
     res.json(result);
   } catch (error) {
     res.send(error);

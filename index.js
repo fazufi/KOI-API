@@ -41,7 +41,5 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static("public"));
 
-app.post("/rekappembayaran", rekap);
-
 app.use("/", require("./src/routes"));
 app.listen(5000, () => console.log("Server started on port 5000"));
