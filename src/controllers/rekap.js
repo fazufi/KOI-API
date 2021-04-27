@@ -26,7 +26,7 @@ exports.getByProgram = async (req, res) => {
       .join("program", "program.id", "rekap.program")
       .join("peserta", "peserta.id", "rekap.peserta")
       .where("program.id", "=", p)
-      .orWhere("program.nama", "=", p)
+      .orWhere("program.nama", "like", `%${p}%`)
       .orWhere("program.created_at", "like", `%${p}%`);
     res.send(result);
   } catch (error) {
@@ -44,9 +44,9 @@ exports.getByPeserta = async (req, res) => {
       .join("program", "program.id", "rekap.program")
       .join("peserta", "peserta.id", "rekap.peserta")
       .where("peserta.id", "=", p)
-      .orWhere("peserta.nama", "=", p)
-      .orWhere("peserta.nim", "=", p)
       .orWhere("peserta.gender", "=", p)
+      .orWhere("peserta.nama", "like", `%${p}%`)
+      .orWhere("peserta.nim", "like", `%${p}%`)      
       .orWhere("peserta.alamat", "like", `%${p}%`)
       .orWhere("peserta.provinsi", "like", `%${p}%`)
       .orWhere("peserta.kabupaten", "like", `%${p}%`)
