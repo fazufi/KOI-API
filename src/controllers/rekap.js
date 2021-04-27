@@ -22,7 +22,7 @@ exports.getByProgram = async (req, res) => {
     const p = req.params.p;
     const result = await req
       .db("rekap")
-      .select("peserta.nama as peserta", "program.nama as program")
+      .select("peserta.nama as peserta", "peserta.nim as nim",  "program.nama as program", "order_id", "payment_type", "transaction_status", "settlement_time", "transaction_time" )
       .join("program", "program.id", "rekap.program")
       .join("peserta", "peserta.id", "rekap.peserta")
       .where("program.id", "=", p)
@@ -40,13 +40,13 @@ exports.getByPeserta = async (req, res) => {
     const p = req.params.p;
     const result = await req
       .db("rekap")
-      .select("peserta.nama as peserta", "program.nama as program")
+      .select("peserta.nama as peserta", "peserta.nim as nim",  "program.nama as program", "order_id", "payment_type", "transaction_status", "settlement_time", "transaction_time" )
       .join("program", "program.id", "rekap.program")
       .join("peserta", "peserta.id", "rekap.peserta")
       .where("peserta.id", "=", p)
-      .orWhere("peserta.nama", "=", p)
-      .orWhere("peserta.nim", "=", p)
       .orWhere("peserta.gender", "=", p)
+      .orWhere("peserta.nama", "like", `%${p}%`)
+      .orWhere("peserta.nim", "like", `%${p}%`)      
       .orWhere("peserta.alamat", "like", `%${p}%`)
       .orWhere("peserta.provinsi", "like", `%${p}%`)
       .orWhere("peserta.kabupaten", "like", `%${p}%`)
