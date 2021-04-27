@@ -48,10 +48,10 @@ exports.put = async (req, res) => {
   try {
     const [ref] = await req.db("program").where({ id: req.params.id });
 
-    const large = await path.join(__dirname, "../../public/large/", ref.foto);
-    const small = await path.join(__dirname, "../../public/small/", ref.foto);
-    await fs.unlinkSync(large);
-    await fs.unlinkSync(small);
+    // const large = await path.join(__dirname, "../../public/large/", ref.foto);
+    // const small = await path.join(__dirname, "../../public/small/", ref.foto);
+    // await fs.unlinkSync(large);
+    // await fs.unlinkSync(small);
 
     await sharp(req.file.path)
       .resize(200)

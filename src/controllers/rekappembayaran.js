@@ -1,4 +1,4 @@
-exports.result = async (req, res) =>{
+exports.result = async (req, res) => {
   // const data = req.db("peserta").insert(req.body)
   // console.log(data)
   await req.db("pembayaran").insert(req.body)

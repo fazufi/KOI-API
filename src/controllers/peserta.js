@@ -51,8 +51,8 @@ exports.post = async (req, res) => {
       created_at,
       updated_at,
     } = req.body;
-    const [isPeserta] = await req.db("peserta").where({ email, password });
-
+    const [isPeserta] = await req.db("peserta").where({ email }).orWhere({ telepon });
+    console.log(isPeserta);
     if (!isPeserta) {
       const pst = await req.db("peserta").orderBy("created_at", "asc");
       const i = (await pst.length) - 1;
@@ -85,25 +85,15 @@ exports.post = async (req, res) => {
       ) {
         await req.db("peserta").insert(req.body);
 
-        // const peserta = await req.db("peserta").where({ email });
-        // const program = await req.db("program").orderBy("created_at", "asc");
-        // const idpeserta = await peserta[0].id;
-        // const idprogram = await program[0].id;
-        // await req
-        //   .db("rekap")
-        //   .insert({ peserta: idpeserta, program: idprogram });
+
       } else {
         return res.status(500).json("data tidak lengkap, atau password salah");
       }
     } else {
+      console.log(isPeserta);
       req.body.updated_at = await new Date();
-      await req.db("peserta").update(req.body).where({ email, password });
+      await req.db("peserta").update(req.body).where({ id: isPeserta.id })
 
-      // const peserta = await req.db("peserta").where({ email });
-      // const program = await req.db("program").orderBy("created_at", "asc");
-      // const idpeserta = await peserta[0].id;
-      // const idprogram = await program[0].id;
-      // await req.db("rekap").insert({ peserta: idpeserta, program: idprogram });
     }
 
     const [result] = await req.db("peserta").where({ email });

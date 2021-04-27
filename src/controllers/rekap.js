@@ -26,7 +26,7 @@ exports.getByProgram = async (req, res) => {
       .join("program", "program.id", "rekap.program")
       .join("peserta", "peserta.id", "rekap.peserta")
       .where("program.id", "=", p)
-      .orWhere("program.nama", "=", p)
+      .orWhere("program.nama", "like", `%${p}%`)
       .orWhere("program.created_at", "like", `%${p}%`);
     res.send(result);
   } catch (error) {

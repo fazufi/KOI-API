@@ -42,9 +42,7 @@ router.post("/payment", payment.payment);
 const checkpayment = require("../controllers/checkpayment")
 router.post("/checkpayment", checkpayment.checkpayment)
 
-const rekappembayaran = require("../controllers/rekappembayaran")
-router.get("/rekappembayaran", rekappembayaran.allGet)
-router.post("/rekappembayaran", rekappembayaran.result);
+
 
 
 module.exports = router;
